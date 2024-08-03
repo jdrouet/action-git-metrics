@@ -36,14 +36,18 @@ runs:
           ${{ inputs.binary_path }} check origin/$GITHUB_BASE_REF..HEAD > check-output.txt
         fi
 
-    - name: move file content to output
+    - name: move file content to output and summary
       shell: bash
       id: check_output
       run: |
         echo "metrics<<EOF" >> $GITHUB_OUTPUT
         cat check-output.txt >> $GITHUB_OUTPUT
         echo EOF >> $GITHUB_OUTPUT
+        echo "📈 This is how your metrics evolved 📉" >> $GITHUB_STEP_SUMMARY
+        echo >> $GITHUB_STEP_SUMMARY
+        echo "```" >> $GITHUB_STEP_SUMMARY
         cat check-output.txt >> $GITHUB_STEP_SUMMARY
+        echo "```" >> $GITHUB_STEP_SUMMARY
 
     - name: commenting pull request
       uses: thollander/actions-comment-pull-request@v2
