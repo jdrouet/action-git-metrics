@@ -1,0 +1,8 @@
+name: "git-metrics"
+description: "Action to interact with git-metrics"
+runs:
+  using: composite
+  steps:
+    - name: information
+      shell: bash
+      run: echo "THIS IS JUST A PLACEHOLDER, LOOK AT THE README"
