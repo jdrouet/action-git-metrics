@@ -16,6 +16,8 @@ This action is located on this repository, in the `install` branch.
     version: "latest"
 ```
 
+Available [here](https://github.com/jdrouet/action-git-metrics/tree/install).
+
 ## Executing a set of commands
 
 This is an action to execute a set of git-metrics commands
@@ -31,6 +33,8 @@ This is an action to execute a set of git-metrics commands
       add binary-size --tag "platform: linux" 1024
 ```
 
+Available [here](https://github.com/jdrouet/action-git-metrics/tree/execute).
+
 ## Reporting metrics diffs and checks
 
 This will execute the diff or check command and push the result to a comment (if done in a pull request) and in the summary.
@@ -41,3 +45,5 @@ This will execute the diff or check command and push the result to a comment (if
 - name: execute git-metrics check
   uses: jdrouet/action-git-metrics@check
 ```
+
+Available [here](https://github.com/jdrouet/action-git-metrics/tree/diff) and [here](https://github.com/jdrouet/action-git-metrics/tree/check).
