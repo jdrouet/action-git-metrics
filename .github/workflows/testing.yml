@@ -1,0 +1,65 @@
+name: code testing
+
+on:
+  pull_request:
+    branches:
+      - check
+  push:
+    branches:
+      - check
+
+env:
+  RUSTFLAGS: "-Dwarnings"
+
+permissions:
+  pull-requests: write
+
+jobs:
+  should-succeed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: jdrouet/action-git-identity@main
+      - uses: jdrouet/action-git-metrics@install
+      - uses: jdrouet/action-git-metrics@execute
+        with:
+          pull: "true"
+          script: "add fake 10.0"
+      - uses: "./"
+        with:
+          comment_tag: "git-metrics-check-success"
+
+  should-not-fail:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: jdrouet/action-git-identity@main
+      - uses: jdrouet/action-git-metrics@install
+      - uses: jdrouet/action-git-metrics@execute
+        with:
+          pull: "true"
+          script: "add fake 200.0"
+      - uses: "./"
+        with:
+          comment_tag: "git-metrics-check-failed"
+          ignore_failure: "true"
+
+  should-fail:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: jdrouet/action-git-identity@main
+      - uses: jdrouet/action-git-metrics@install
+      - uses: jdrouet/action-git-metrics@execute
+        with:
+          pull: "true"
+          script: "add fake 200.0"
+      - uses: "./"
+        with:
+          comment_tag: "git-metrics-check-failed"

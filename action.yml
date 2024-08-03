@@ -1,0 +1,56 @@
+name: "git-metrics check result in pull request"
+description: "A GitHub action to check metrics and push in a pull request comment"
+author: "Jeremie Drouet <jeremie.drouet@gmail.com>"
+
+# Add your action's branding here. This will appear on the GitHub Marketplace.
+branding:
+  icon: "bar-chart"
+  color: "blue"
+
+# Define your inputs here.
+inputs:
+  comment_tag:
+    description: "Tag to use for later updates"
+    required: false
+    default: "git-metrics-check"
+  ignore_failure:
+    description: "Should ignore when check fails"
+    required: false
+    default: "false"
+  binary_path:
+    description: "Path to the git-metrics binary"
+    required: false
+    default: "git-metrics"
+
+runs:
+  using: composite
+  steps:
+    - name: execute git-metrics
+      continue-on-error: true
+      shell: bash
+      id: check
+      run: ${{ inputs.binary_path }} check origin/$GITHUB_BASE_REF..HEAD > check-output.txt
+
+    - name: move file content to output
+      shell: bash
+      id: check_output
+      run: |
+        echo "metrics<<EOF" >> $GITHUB_OUTPUT
+        cat check-output.txt >> $GITHUB_OUTPUT
+        echo EOF >> $GITHUB_OUTPUT
+
+    - name: commenting pull request
+      uses: thollander/actions-comment-pull-request@v2
+      with:
+        comment_tag: ${{ inputs.comment_tag }}
+        message: |
+          📈 This is how your metrics evolved 📉
+
+          ```
+          ${{ steps.check_output.outputs.metrics }}
+          ```
+
+    - name: report exit code
+      shell: bash
+      if: ${{ inputs.ignore_failure == 'false' && steps.check.outcome == 'failure' }}
+      run: exit 1
