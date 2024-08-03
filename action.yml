@@ -1,0 +1,35 @@
+name: 'git-metrics install'
+description: 'A GitHub action to install git-metrics'
+author: 'Jeremie Drouet <jeremie.drouet@gmail.com>'
+
+# Add your action's branding here. This will appear on the GitHub Marketplace.
+branding:
+  icon: 'heart'
+  color: 'red'
+
+# Define your inputs here.
+inputs:
+  force:
+    description: 'Wether we should force the reinstall of an existing file'
+    required: false
+    default: 'false'
+  version:
+    description: 'git-metrics version'
+    required: false
+    default: 'latest'
+  GITHUB_TOKEN:
+    description:
+      'Github token of the repository (automatically created by Github)'
+    default: ${{ github.token }}
+    required: false
+
+# Define your outputs here.
+outputs:
+  already-installed:
+    description: 'Wether git-metrics was already installed'
+  installed:
+    description: 'Wether git-metrics has been installed in the process'
+
+runs:
+  using: node20
+  main: dist/index.js

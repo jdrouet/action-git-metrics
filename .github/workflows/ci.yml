@@ -1,0 +1,72 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test-typescript:
+    name: TypeScript Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        id: setup-node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - name: Install Dependencies
+        id: npm-ci
+        run: npm ci
+
+      - name: Check Format
+        id: npm-format-check
+        run: npm run format:check
+
+      - name: Test
+        id: npm-ci-test
+        run: npm run ci-test
+
+  test-action:
+    strategy:
+      fail-fast: true
+      matrix:
+        platform: ['macos-latest', 'ubuntu-latest']
+        version: ['v0.1.2', 'v0.2.1', 'latest']
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: simply install
+        uses: ./
+        with:
+          version: ${{ matrix.version }}
+      - name: execute git-metrics
+        run: git-metrics --help
+      - name: reinstall without forcing
+        uses: ./
+        id: reinstall
+      - name: check if reinstall
+        if: ${{ steps.reinstall.outputs.already-installed == 'false' }}
+        run: exit 1
+      - name: force reinstall
+        uses: ./
+        id: force-reinstall
+        with:
+          force: 'true'
+          version: ${{ matrix.version }}
+      - name: check if force reinstall
+        if: ${{ steps.force-reinstall.outputs.installed == 'false' }}
+        run: exit 1
