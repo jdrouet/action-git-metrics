@@ -3,10 +3,10 @@ name: Continuous Integration
 on:
   pull_request:
     branches:
-      - main
+      - execute
   push:
     branches:
-      - main
+      - execute
 
 permissions:
   contents: read
