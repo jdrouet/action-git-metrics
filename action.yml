@@ -1,5 +1,5 @@
-name: "git-metrics check result in pull request"
-description: "A GitHub action to check metrics and push in a pull request comment"
+name: "git-metrics check result"
+description: "A GitHub action to check metrics and push in summary and in a pull request comment"
 author: "Jeremie Drouet <jeremie.drouet@gmail.com>"
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
