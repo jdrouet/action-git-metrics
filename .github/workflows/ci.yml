@@ -1,0 +1,72 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test-typescript:
+    name: TypeScript Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run ci-test
+
+  test-action:
+    name: GitHub Actions Test
+    strategy:
+      fail-fast: true
+      matrix:
+        platform: ['macos-latest', 'ubuntu-latest']
+        version: ['v0.1.4']
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: install git-metrics
+        uses: jdrouet/action-install-git-metrics@main
+        with:
+          version: ${{ matrix.version }}
+      - uses: jdrouet/action-git-identity@main
+      - name: executing script
+        id: test-action
+        uses: ./
+        with:
+          script: |
+            add name 12.3
+            show
+
+      - name: Print Output
+        run: echo "${{ steps.test-action.outputs.result }}"
+
+  test-continue-on-error:
+    name: The script should keep going
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdrouet/action-install-git-metrics@main
+      - uses: jdrouet/action-git-identity@main
+      - uses: ./
+        with:
+          script: |
+            show
+            unknown
+            show
+          backend: git2
+          continueOnError: 'true'

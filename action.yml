@@ -1,0 +1,44 @@
+name: 'git-metrics execute'
+description: 'A GitHub Action to execute git-metrics commands'
+author: 'Jeremie Drouet <jeremie.drouet@gmail.com>'
+
+# Add your action's branding here. This will appear on the GitHub Marketplace.
+branding:
+  icon: 'feather'
+  color: 'green'
+
+# Define your inputs here.
+inputs:
+  backend:
+    description: 'The type of backend to use'
+    required: false
+    default: 'command'
+  continueOnError:
+    description:
+      'When enabled, if a command fails, the next ones should still be executed'
+    required: false
+    default: 'false'
+  script:
+    description: 'A list of command to execute'
+    required: true
+  pull:
+    description: 'Shortcut to pull before executing the script'
+    required: false
+    default: 'false'
+  push:
+    description: 'Shortcut to push after executing the script'
+    required: false
+    default: 'false'
+  sync:
+    description: 'Wether the action should pull before and push after'
+    required: false
+    default: 'false'
+
+# Define your outputs here.
+outputs:
+  result:
+    description: 'The output of all the command executed, kept in order.'
+
+runs:
+  using: node20
+  main: dist/index.js
