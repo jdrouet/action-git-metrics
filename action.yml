@@ -29,7 +29,12 @@ runs:
       continue-on-error: true
       shell: bash
       id: check
-      run: ${{ inputs.binary_path }} check origin/$GITHUB_BASE_REF..HEAD > check-output.txt
+      run: |
+        if [[ -z "$GITHUB_BASE_REF" ]]; then
+          ${{ inputs.binary_path }} check HEAD > check-output.txt
+        else
+          ${{ inputs.binary_path }} check origin/$GITHUB_BASE_REF..HEAD > check-output.txt
+        fi
 
     - name: move file content to output
       shell: bash
@@ -38,9 +43,11 @@ runs:
         echo "metrics<<EOF" >> $GITHUB_OUTPUT
         cat check-output.txt >> $GITHUB_OUTPUT
         echo EOF >> $GITHUB_OUTPUT
+        cat check-output.txt >> $GITHUB_STEP_SUMMARY
 
     - name: commenting pull request
       uses: thollander/actions-comment-pull-request@v2
+      if: ${{ github.event_name == 'pull_request' }}
       with:
         comment_tag: ${{ inputs.comment_tag }}
         message: |
