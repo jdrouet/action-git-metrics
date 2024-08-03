@@ -1,5 +1,5 @@
-name: "git-metrics check result"
-description: "A GitHub action to check metrics and push in summary and in a pull request comment"
+name: "git-metrics diff result"
+description: "A GitHub action to diff metrics and push in summary and in a pull request comment"
 author: "Jeremie Drouet <jeremie.drouet@gmail.com>"
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
@@ -12,11 +12,7 @@ inputs:
   comment_tag:
     description: "Tag to use for later updates"
     required: false
-    default: "git-metrics-check"
-  ignore_failure:
-    description: "Should ignore when check fails"
-    required: false
-    default: "false"
+    default: "git-metrics-diff"
   binary_path:
     description: "Path to the git-metrics binary"
     required: false
@@ -31,9 +27,9 @@ runs:
       id: check
       run: |
         if [[ -z "$GITHUB_BASE_REF" ]]; then
-          ${{ inputs.binary_path }} check HEAD > check-output.txt
+          ${{ inputs.binary_path }} diff HEAD > check-output.txt
         else
-          ${{ inputs.binary_path }} check origin/$GITHUB_BASE_REF..HEAD > check-output.txt
+          ${{ inputs.binary_path }} diff origin/$GITHUB_BASE_REF..HEAD > check-output.txt
         fi
 
     - name: move file content to output and summary
@@ -60,8 +56,3 @@ runs:
           ```
           ${{ steps.check_output.outputs.metrics }}
           ```
-
-    - name: report exit code
-      shell: bash
-      if: ${{ inputs.ignore_failure == 'false' && steps.check.outcome == 'failure' }}
-      run: exit 1
