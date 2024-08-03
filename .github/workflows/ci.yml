@@ -40,7 +40,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: install git-metrics
-        uses: jdrouet/action-install-git-metrics@main
+        uses: jdrouet/action-git-metrics@install
         with:
           version: ${{ matrix.version }}
       - uses: jdrouet/action-git-identity@main
@@ -60,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: jdrouet/action-install-git-metrics@main
+      - uses: jdrouet/action-git-metrics@install
       - uses: jdrouet/action-git-identity@main
       - uses: ./
         with:

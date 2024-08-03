@@ -8,7 +8,7 @@
 
 This action should be used to use
 [git-metrics](https://github.com/jdrouet/git-metrics) after installing it with
-[action-install-git-metrics](https://github.com/jdrouet/action-install-git-metrics).
+[action-install-git-metrics](https://github.com/jdrouet/action-git-metrics/tree/install).
 
 ## Usage
 
@@ -19,7 +19,7 @@ steps:
     uses: actions/checkout@v4
 
   - name: Install git-metrics
-    uses: jdrouet/action-install-git-metrics@main
+    uses: jdrouet/action-git-metrics@install
 
   - name: Execute git-metrics
     uses: jdrouet/action-execute-git-metrics@main # or with a specific version
