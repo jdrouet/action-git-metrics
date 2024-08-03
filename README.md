@@ -22,7 +22,7 @@ steps:
     uses: jdrouet/action-git-metrics@install
 
   - name: Execute git-metrics
-    uses: jdrouet/action-execute-git-metrics@main # or with a specific version
+    uses: jdrouet/action-git-metrics@execute
     with:
       pull: 'false' # Shortcut to pull before executing the script
       push: 'false' # Shortcut to push after executing the script
