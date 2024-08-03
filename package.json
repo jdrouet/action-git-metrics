@@ -4,13 +4,13 @@
   "version": "0.1.0",
   "author": "Jeremie Drouet <jeremie.drouet@gmail.com>",
   "private": true,
-  "homepage": "https://github.com/jdrouet/action-install-git-metrics",
+  "homepage": "https://github.com/jdrouet/action-git-metrics",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jdrouet/action-install-git-metrics.git"
+    "url": "git+https://github.com/jdrouet/action-git-metrics.git"
   },
   "bugs": {
-    "url": "https://github.com/jdrouet/action-install-git-metrics/issues"
+    "url": "https://github.com/jdrouet/action-git-metrics/issues"
   },
   "keywords": [
     "actions",

@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: jdrouet/action-install-git-metrics
+      - uses: jdrouet/action-git-metrics@install
       - name: execute git-metrics
         run: git-metrics add my-metric 12.34
 ```
