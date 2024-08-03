@@ -16,14 +16,14 @@ steps:
     uses: jdrouet/action-git-identity@main
 
   - name: Install git-metrics
-    uses: jdrouet/action-install-git-metrics@main
+    uses: jdrouet/action-git-metrics@install
 
   - name: Execute git-metrics
-    uses: jdrouet/action-execute-git-metrics@main # or with a specific version
+    uses: jdrouet/action-git-metrics@execute
     with:
       pull: 'true'
-      script: add my-metric --tag "foo: bar" 12.34
+      script: 'add my-metric --tag "foo: bar" 12.34'
 
   - name: Comment git-metrics check
-    uses: jdrouet/action-check-git-metrics@main
+    uses: jdrouet/action-git-metrics@check
 ```
