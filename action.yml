@@ -36,19 +36,34 @@ runs:
           ${{ inputs.binary_path }} check origin/$GITHUB_BASE_REF..HEAD > $RUNNER_TEMP/check-output.txt
         fi
 
-    - name: move file content to output and summary
+    - name: move file content to output
       shell: bash
       id: check_output
       run: |
+        if [[ ! -f "$RUNNER_TEMP/check-output.txt" ]]; then
+          echo "couldn't find check output file"
+          exit 1
+        fi
+
         echo "metrics<<EOF" >> $GITHUB_OUTPUT
         cat $RUNNER_TEMP/check-output.txt >> $GITHUB_OUTPUT
         echo EOF >> $GITHUB_OUTPUT
+
+    - name: move file content to summary
+      continue-on-error: true
+      shell: bash
+      run: |
+        if [[ ! -f "$RUNNER_TEMP/check-output.txt" ]]; then
+          echo "couldn't find check output file"
+          exit 1
+        fi
+
         if [[ -f "$GITHUB_STEP_SUMMARY" ]]; then
           echo "📈 This is how your metrics evolved 📉" >> $GITHUB_STEP_SUMMARY
           echo >> $GITHUB_STEP_SUMMARY
-          echo "```" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
           cat $RUNNER_TEMP/check-output.txt >> $GITHUB_STEP_SUMMARY
-          echo "```" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
         else
           echo "Step summary doesn't exist"
         fi
