@@ -27,9 +27,9 @@ runs:
       id: check
       run: |
         if [[ -z "$GITHUB_BASE_REF" ]]; then
-          ${{ inputs.binary_path }} diff HEAD > check-output.txt
+          ${{ inputs.binary_path }} diff HEAD > ${{ runner.temp }}/check-output.txt
         else
-          ${{ inputs.binary_path }} diff origin/$GITHUB_BASE_REF..HEAD > check-output.txt
+          ${{ inputs.binary_path }} diff origin/$GITHUB_BASE_REF..HEAD > ${{ runner.temp }}/check-output.txt
         fi
 
     - name: move file content to output and summary
@@ -37,12 +37,12 @@ runs:
       id: check_output
       run: |
         echo "metrics<<EOF" >> $GITHUB_OUTPUT
-        cat check-output.txt >> $GITHUB_OUTPUT
+        cat ${{ runner.temp }}/check-output.txt >> $GITHUB_OUTPUT
         echo EOF >> $GITHUB_OUTPUT
         echo "📈 This is how your metrics evolved 📉" >> $GITHUB_STEP_SUMMARY
         echo >> $GITHUB_STEP_SUMMARY
         echo "```" >> $GITHUB_STEP_SUMMARY
-        cat check-output.txt >> $GITHUB_STEP_SUMMARY
+        cat ${{ runner.temp }}/check-output.txt >> $GITHUB_STEP_SUMMARY
         echo "```" >> $GITHUB_STEP_SUMMARY
 
     - name: commenting pull request
