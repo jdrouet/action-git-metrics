@@ -45,18 +45,14 @@ runs:
           exit 1
         fi
 
-        if [ "${{ inputs.format }}" = "text" ]; then
-          echo "metrics<<EOF" >> $GITHUB_OUTPUT
-          cat ${{ runner.temp }}/check-output.txt >> $GITHUB_OUTPUT
-          echo EOF >> $GITHUB_OUTPUT
-        else
-          echo "metrics=$(cat $RUNNER_TEMP/check-output.txt)" >> $GITHUB_OUTPUT
-        fi
+        echo "metrics<<EOF" >> $GITHUB_OUTPUT
+        cat ${{ runner.temp }}/check-output.txt >> $GITHUB_OUTPUT
+        echo EOF >> $GITHUB_OUTPUT
 
         if [[ -f "$GITHUB_STEP_SUMMARY" ]]; then
+          echo "📈 This is how your metrics evolved 📉" >> $GITHUB_STEP_SUMMARY
+          echo >> $GITHUB_STEP_SUMMARY
           if [ "${{ inputs.format }}" = "text" ]; then
-            echo "📈 This is how your metrics evolved 📉" >> $GITHUB_STEP_SUMMARY
-            echo >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             cat $RUNNER_TEMP/check-output.txt >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
