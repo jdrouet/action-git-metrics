@@ -49,6 +49,8 @@ runs:
           exit 1
         fi
 
+        cat $RUNNER_TEMP/check-output.txt
+
         echo "metrics<<EOF" >> $GITHUB_OUTPUT
         cat $RUNNER_TEMP/check-output.txt >> $GITHUB_OUTPUT
         echo EOF >> $GITHUB_OUTPUT
