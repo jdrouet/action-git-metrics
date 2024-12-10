@@ -46,7 +46,7 @@ jobs:
           script: "add fake 10.0"
       - uses: "./"
         with:
-          comment_tag: "git-metrics-check-success"
+          comment_tag: "git-metrics-check-markdown"
           format: markdown
 
   should-not-fail:
