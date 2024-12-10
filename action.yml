@@ -49,11 +49,13 @@ runs:
           exit 1
         fi
 
-        cat $RUNNER_TEMP/check-output.txt
-
-        echo "metrics<<EOF" >> $GITHUB_OUTPUT
-        cat $RUNNER_TEMP/check-output.txt >> $GITHUB_OUTPUT
-        echo EOF >> $GITHUB_OUTPUT
+        if [ "${{ inputs.format }}" = "text" ]; then
+          echo "metrics<<EOF" >> $GITHUB_OUTPUT
+          cat $RUNNER_TEMP/check-output.txt >> $GITHUB_OUTPUT
+          echo EOF >> $GITHUB_OUTPUT
+        else
+          echo "metrics=$(cat $RUNNER_TEMP/check-output.txt)" >> $GITHUB_OUTPUT
+        fi
 
     - name: move file content to summary
       continue-on-error: true
