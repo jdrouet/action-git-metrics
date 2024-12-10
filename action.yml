@@ -17,6 +17,10 @@ inputs:
     description: "Path to the git-metrics binary"
     required: false
     default: "git-metrics"
+  format:
+    description: "Output format of the command"
+    required: false
+    default: "text"
 
 runs:
   using: composite
@@ -27,27 +31,41 @@ runs:
       id: check
       run: |
         if [[ -z "$GITHUB_BASE_REF" ]]; then
-          ${{ inputs.binary_path }} diff HEAD > ${{ runner.temp }}/check-output.txt
+          ${{ inputs.binary_path }} diff HEAD --format ${{ inputs.format }} > ${{ runner.temp }}/check-output.txt
         else
-          ${{ inputs.binary_path }} diff origin/$GITHUB_BASE_REF..HEAD > ${{ runner.temp }}/check-output.txt
+          ${{ inputs.binary_path }} diff origin/$GITHUB_BASE_REF..HEAD --format ${{ inputs.format }} > ${{ runner.temp }}/check-output.txt
         fi
 
     - name: move file content to output and summary
       shell: bash
       id: check_output
       run: |
+        if [[ ! -f "$RUNNER_TEMP/check-output.txt" ]]; then
+          echo "couldn't find check output file"
+          exit 1
+        fi
+
         echo "metrics<<EOF" >> $GITHUB_OUTPUT
         cat ${{ runner.temp }}/check-output.txt >> $GITHUB_OUTPUT
         echo EOF >> $GITHUB_OUTPUT
-        echo "📈 This is how your metrics evolved 📉" >> $GITHUB_STEP_SUMMARY
-        echo >> $GITHUB_STEP_SUMMARY
-        echo "```" >> $GITHUB_STEP_SUMMARY
-        cat ${{ runner.temp }}/check-output.txt >> $GITHUB_STEP_SUMMARY
-        echo "```" >> $GITHUB_STEP_SUMMARY
 
-    - name: commenting pull request
+        if [[ -f "$GITHUB_STEP_SUMMARY" ]]; then
+          echo "📈 This is how your metrics evolved 📉" >> $GITHUB_STEP_SUMMARY
+          echo >> $GITHUB_STEP_SUMMARY
+          if [ "${{ inputs.format }}" = "text" ]; then
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat $RUNNER_TEMP/check-output.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            cat $RUNNER_TEMP/check-output.txt >> $GITHUB_STEP_SUMMARY
+          fi
+        else
+          echo "Step summary doesn't exist"
+        fi
+
+    - name: commenting pull request with text format
       uses: thollander/actions-comment-pull-request@v2
-      if: ${{ github.event_name == 'pull_request' }}
+      if: ${{ github.event_name == 'pull_request' && inputs.format == 'text' }}
       with:
         comment_tag: ${{ inputs.comment_tag }}
         message: |
@@ -56,3 +74,13 @@ runs:
           ```
           ${{ steps.check_output.outputs.metrics }}
           ```
+
+    - name: commenting pull request with other format
+      uses: thollander/actions-comment-pull-request@v2
+      if: ${{ github.event_name == 'pull_request' && inputs.format != 'text' }}
+      with:
+        comment_tag: ${{ inputs.comment_tag }}
+        message: |
+          📈 This is how your metrics evolved 📉
+
+          ${{ steps.check_output.outputs.metrics }}

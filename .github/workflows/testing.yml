@@ -30,3 +30,20 @@ jobs:
       - uses: "./"
         with:
           comment_tag: "git-metrics-check-success"
+
+  should-with-format-markdown:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: jdrouet/action-git-identity@main
+      - uses: jdrouet/action-git-metrics@install
+      - uses: jdrouet/action-git-metrics@execute
+        with:
+          pull: "true"
+          script: "add fake 10.0"
+      - uses: "./"
+        with:
+          comment_tag: "git-metrics-check-success-markdown"
+          format: markdown
